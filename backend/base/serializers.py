@@ -18,11 +18,13 @@ class UserSerializer(serializers.ModelSerializer):
     """
     Simple user serielizer class
     """
+    name = serializers.SerializerMethodField(read_only=True)
+    _id = serializers.SerializerMethodField(read_only=True)
+    isAdmin = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = User
         fields = ['id', '_id', 'username', 'email', 'name', 'isAdmin']
-        read_only_fields = ['name', '_id', 'id', 'isAdmin']
 
     def get__id(self, obj):
         return obj.id
@@ -42,11 +44,11 @@ class UserSerializerWithToken(UserSerializer):
     """
     User with JWT token serielizer
     """
+    token = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = User
         fields = ['id', '_id', 'username', 'email', 'name', 'isAdmin', 'token']
-        read_only_fields = ['token']
 
     def get_token(self, obj):
         token = RefreshToken.for_user(obj)
@@ -57,6 +59,7 @@ class ProductSerializer(serializers.ModelSerializer):
     """
     Simple Product Serielizer class
     """
+    reviews = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Product
@@ -71,8 +74,14 @@ class ProductSerializer(serializers.ModelSerializer):
             'numReviews',
             'price',
             'countInStock',
-            '_id'
+            '_id',
+            'reviews'
         )
+
+    def get_reviews(self, obj):
+        reviews = obj.review_set.all()
+        serializer = ReviewSerializer(reviews, many=True)
+        return serializer.data
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -101,6 +110,9 @@ class OrderSerializer(serializers.ModelSerializer):
     """
     Simple Review Serielizer class
     """
+    orderItems = serializers.SerializerMethodField(read_only=True)
+    shippingAddress = serializers.SerializerMethodField(read_only=True)
+    user = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Order
@@ -116,8 +128,6 @@ class OrderSerializer(serializers.ModelSerializer):
             'deliveredAt',
             '_id',
         )
-
-    read_only_fields = ['orderItems', 'shippingAddress', 'user']
 
     def get_orderItems(self, obj):
         items = obj.orderitem_set.all()
