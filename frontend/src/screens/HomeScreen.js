@@ -4,22 +4,29 @@ import { Row, Col } from 'react-bootstrap'
 import Product from '../components/Product'
 import Loader from '../components/Loader'
 import Message from '../components/Message'
+import Paginate from '../components/Paginate'
+import ProductCarousel from '../components/ProductCarousel'
 import { listProducts } from '../actions/productActions'
+import { useLocation } from 'react-router-dom'
 
 
 function HomeScreen() {
-    //Modify the state of a object
     const dispatch = useDispatch()
+    let keyword = useLocation().search
+
     const productList = useSelector(state => state.productList)
-    const { error, loading, products } = productList
+    const { error, loading, products, page, pages } = productList
+
 
     useEffect(() => {
-        dispatch(listProducts())
+        dispatch(listProducts(keyword))
 
-    }, [dispatch])
+    }, [dispatch, keyword])
 
     return (
         <div>
+            {!keyword && <ProductCarousel />}
+
             <h1>Latest Products</h1>
             {loading ? <Loader />
                 : error ? <Message variant='danger'>{error}</Message>
@@ -32,9 +39,9 @@ function HomeScreen() {
                                 </Col>
                             ))}
                         </Row>
+                        <Paginate page={page} pages={pages} keyword={keyword} />
                     </div>
             }
-
         </div>
     )
 }
