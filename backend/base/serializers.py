@@ -91,14 +91,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Review
-        fields = (
-            'product',
-            'user',
-            'name',
-            'rating',
-            'comment',
-            '_id'
-        )
+        fields = '__all__'
 
     def get_reviews(self, obj):
         reviews = obj.review_set.all()
@@ -116,18 +109,7 @@ class OrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = (
-            'user',
-            'paymentMethod',
-            'taxPrice',
-            'shippingPrice',
-            'totalPrice',
-            'isPaid',
-            'paidAt',
-            'isDelivered',
-            'deliveredAt',
-            '_id',
-        )
+        fields = '__all__'
 
     def get_orderItems(self, obj):
         items = obj.orderitem_set.all()
@@ -155,14 +137,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = OrderItem
-        fields = (
-            'product',
-            'order',
-            'name',
-            'qty',
-            'price',
-            'image',
-        )
+        fields = '__all__'
 
 
 class ShippingAddressSerializer(serializers.ModelSerializer):
