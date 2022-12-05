@@ -206,7 +206,7 @@ function ProductScreen() {
                                                         disabled={loadingProductReview}
                                                         type='submit'
                                                         variant='primary'
-                                                        className='btn btn 100w'
+                                                        className='btn btn-block w-100'
                                                     >
                                                         Submit
                                                     </Button>

@@ -50,9 +50,9 @@ h3 {
   margin: 0 auto;
 }
 
-.form-label,
-.btn {
-  padding: 1rem 0;
+.form-check {
+  padding-bottom:1rem;
+  
 }
 
 @media (max-width: 900px) {

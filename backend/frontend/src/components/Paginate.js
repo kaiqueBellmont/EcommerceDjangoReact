@@ -19,7 +19,7 @@ function Paginate({page, pages, maxPageDisplay=5, isAdmin=false}) {
         <Pagination>
  
             {/* First */}
-            {pages != 1 && page != 1 ? (
+            {pages !== 1 && page !== 1 ? (
                 <Pagination.First href={`${url}page=1`}>First</Pagination.First>
             ) : (
                 <Pagination.First disabled>First</Pagination.First>
@@ -67,7 +67,7 @@ function Paginate({page, pages, maxPageDisplay=5, isAdmin=false}) {
  
  
             {/* Last */}
-            {pages != page ? (
+            {pages !== page ? (
                 <Pagination.Last href={`${url}page=${pages}`}>Last</Pagination.Last>
             ) : (
                 <Pagination.Last disabled>Last</Pagination.Last>
