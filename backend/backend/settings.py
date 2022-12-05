@@ -9,12 +9,13 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
-
+import os
 from pathlib import Path
-
+from dotenv import load_dotenv
 from datetime import timedelta
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -40,9 +41,8 @@ INSTALLED_APPS = [
     "corsheaders",
     "rest_framework",
 
-    "base.apps.BaseConfig",
-    "base.views",
-    "base.urls"
+    'base.apps.BaseConfig',
+
 ]
 
 REST_FRAMEWORK = {
@@ -176,3 +176,17 @@ CORS_ALLOW_ALL_ORIGINS = True
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+# Celery
+CELERY_accept_content = ['application/json']
+CELERY_task_serializer = 'json'
+CELERY_TASK_DEFAULT_QUEUE = 'myqueue'
+CELERY_BROKER_URL = "sqs://%s:%s@" % (os.environ.get('AWS_ACCESS_KEY_ID'), os.environ.get('AWS_SECRET_ACCESS_KEY'))
+CELERY_BROKER_TRANSPORT_OPTIONS = {
+    "region": "ap-southeast-1",
+    'queue_name_prefix': 'django-',
+    'visibility_timeout': 7200,
+    'polling_interval': 1
+}
+CELERY_result_backend = None

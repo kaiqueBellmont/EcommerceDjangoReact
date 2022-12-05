@@ -1,0 +1,5 @@
+celery:
+    build: ./backend
+    volumes:
+      - backend:/usr/src/app
+    command: celery -A docker_django_tutorial worker -l INFO -Q dev
