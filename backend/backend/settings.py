@@ -13,6 +13,8 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 from datetime import timedelta
+from kombu.utils.url import safequote
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv()
@@ -102,7 +104,10 @@ ROOT_URLCONF = "backend.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [
+            'backend/frontend/build',
+            os.path.join(BASE_DIR, 'frontend/build')
+        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -181,12 +186,18 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # Celery
 CELERY_accept_content = ['application/json']
 CELERY_task_serializer = 'json'
-CELERY_TASK_DEFAULT_QUEUE = 'myqueue'
-CELERY_BROKER_URL = "sqs://%s:%s@" % (os.environ.get('AWS_ACCESS_KEY_ID'), os.environ.get('AWS_SECRET_ACCESS_KEY'))
+CELERY_TASK_DEFAULT_QUEUE = 'django-queue-dev'
+CELERY_BROKER_URL = "sqs://"
+
 CELERY_BROKER_TRANSPORT_OPTIONS = {
-    "region": "ap-southeast-1",
-    'queue_name_prefix': 'django-',
-    'visibility_timeout': 7200,
-    'polling_interval': 1
+    'region': 'us-east-1',
+    'visibility_timeout': 3600,
+    'predefined_queues': {
+        'django-queue-dev': {
+            'url': 'https://sqs.us-east-1.amazonaws.com/524876634018/django-queue-dev',
+            'access_key_id': os.environ.get('AWS_ACCESS_KEY_ID'),
+            'secret_access_key': os.environ.get('AWS_SECRET_ACCESS_KEY')
+        }
+    }
 }
 CELERY_result_backend = None
