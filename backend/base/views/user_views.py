@@ -1,4 +1,3 @@
-from rest_framework.decorators import api_view, permission_classes
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
 from rest_framework import status
@@ -9,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 
-from base.serializers import UserSerializer, UserSerializerWithToken
+from ..serializers import UserSerializer, UserSerializerWithToken
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -17,23 +16,26 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         data = super().validate(attrs)
 
         serializer = UserSerializerWithToken(self.user).data
+        print(serializer)
         for k, v in serializer.items():
             data[k] = v
 
         return data
 
 
-class MyTokenObtainPairView(TokenObtainPairView):
+class   MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
 
 @api_view(['POST'])
 def registerUser(request):
+
     data = request.data
     try:
+        print(User)
         user = User.objects.create(
             first_name=data['name'],
-            username=data['email'],
+            username=data['name'],
             email=data['email'],
             password=make_password(data['password'])
         )
@@ -83,6 +85,7 @@ def getUsers(request):
 @api_view(['GET'])
 @permission_classes([IsAdminUser])
 def getUserById(request, pk):
+    print(request)
     user = User.objects.get(id=pk)
     serializer = UserSerializer(user, many=False)
     return Response(serializer.data)

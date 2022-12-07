@@ -54,6 +54,9 @@ h3 {
   padding-bottom:1rem;
   
 }
+.text-and{
+  padding-left: 10rem;
+}
 
 @media (max-width: 900px) {
   .carousel-caption h2 {

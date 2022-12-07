@@ -25,10 +25,10 @@ load_dotenv()
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "django-insecure-ebeuip^y@c=u-&a5whw)853uguqpx^ug02^j*!u%*7tz($38vu"
 
-# SECURITY WARNING: don't run with debug turned on in production!
+# SECURITY WARNING: don't run with  turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -40,9 +40,10 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
+    "storages",
+
     "corsheaders",
     "rest_framework",
-
     'base.apps.BaseConfig',
 
 ]
@@ -106,7 +107,8 @@ TEMPLATES = [
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [
             'backend/frontend/build',
-            os.path.join(BASE_DIR, 'frontend/build')
+            os.path.join(BASE_DIR, 'frontend/build'),
+            'backend/frontend/src'
         ],
         "APP_DIRS": True,
         "OPTIONS": {
@@ -125,13 +127,30 @@ WSGI_APPLICATION = "backend.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
-}
+import os
 
+if 'RDS_HOSTNAME' in os.environ:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': os.environ['RDS_DB_NAME'],
+            'USER': os.environ['RDS_USERNAME'],
+            'PASSWORD': os.environ['RDS_PASSWORD'],
+            'HOST': os.environ['RDS_HOSTNAME'],
+            'PORT': os.environ['RDS_PORT'],
+        }
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('POSTGRES_NAME'),
+            'USER': os.environ.get('POSTGRES_USER'),
+            'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
+            'HOST': 'db',
+            'PORT': 5432,
+        }
+    }
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
@@ -170,10 +189,21 @@ MEDIA_URL = '/images/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
     BASE_DIR / 'frontend/build/static'
+
 ]
 
+AWS_QUERYSTRING_AUTH = False
 MEDIA_ROOT = BASE_DIR / 'static/images'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# AWS storage in bucket
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+STATICFILES_STORAGE = 'storages.backends.s3boto3.S3StaticStorage'
+
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+
+AWS_STORAGE_BUCKET_NAME = 'eukiak-bucket-demo'
 
 CORS_ALLOW_ALL_ORIGINS = True
 
@@ -182,8 +212,10 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-
 # Celery
+
+
+"""
 CELERY_accept_content = ['application/json']
 CELERY_task_serializer = 'json'
 CELERY_TASK_DEFAULT_QUEUE = 'django-queue-dev'
@@ -201,3 +233,4 @@ CELERY_BROKER_TRANSPORT_OPTIONS = {
     }
 }
 CELERY_result_backend = None
+"""

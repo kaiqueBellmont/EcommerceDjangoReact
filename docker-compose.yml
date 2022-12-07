@@ -1,5 +1,22 @@
-celery:
-    build: ./backend
+services:
+  db:
+    image: postgres
     volumes:
-      - backend:/usr/src/app
-    command: celery -A docker_django_tutorial worker -l INFO -Q dev
+      - ./data/db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/code/
+    ports:
+      - "8000:8000"
+    environment:
+      - POSTGRES_NAME=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    depends_on:
+      - db
