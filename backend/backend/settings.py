@@ -108,7 +108,6 @@ TEMPLATES = [
         "DIRS": [
             'backend/frontend/build',
             os.path.join(BASE_DIR, 'frontend/build'),
-            'backend/frontend/src'
         ],
         "APP_DIRS": True,
         "OPTIONS": {
