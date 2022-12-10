@@ -10,10 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 import os
-from pathlib import Path
-from dotenv import load_dotenv
 from datetime import timedelta
-from kombu.utils.url import safequote
+from pathlib import Path
+
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,7 +23,7 @@ load_dotenv()
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-ebeuip^y@c=u-&a5whw)853uguqpx^ug02^j*!u%*7tz($38vu"
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with  turned on in production!
 DEBUG = True
@@ -40,22 +40,31 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
+    # swagger drf
+    "drf_yasg",
+    'rest_framework_swagger',
+    # bucket aws
     "storages",
 
+    # front integration
     "corsheaders",
+
     "rest_framework",
     'base.apps.BaseConfig',
 
 ]
 
+# drf configs
 REST_FRAMEWORK = {
 
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication'
     )
 
 }
 
+# JWT configuration
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=30),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
@@ -126,8 +135,7 @@ WSGI_APPLICATION = "backend.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-import os
-
+# AWS RDS config or local RDS
 if 'RDS_HOSTNAME' in os.environ:
     DATABASES = {
         'default': {
@@ -139,7 +147,7 @@ if 'RDS_HOSTNAME' in os.environ:
             'PORT': os.environ['RDS_PORT'],
         }
     }
-else:
+if not 'RDS_HOSTNAME' in os.environ:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
@@ -182,6 +190,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
+CORS_ALLOW_ALL_ORIGINS = True
+
+# static configs
+
 STATIC_URL = '/static/'
 MEDIA_URL = '/images/'
 
@@ -191,45 +203,36 @@ STATICFILES_DIRS = [
 
 ]
 
+# AWS bucket
+
+
+# AWS storage in bucket
 AWS_QUERYSTRING_AUTH = False
 MEDIA_ROOT = BASE_DIR / 'static/images'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+AWS_STORAGE_BUCKET_NAME = 'eukiak-bucket-demo'
 
-# AWS storage in bucket
+# AWS RDS configs
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 STATICFILES_STORAGE = 'storages.backends.s3boto3.S3StaticStorage'
 
+# AWS credentials
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
-
-AWS_STORAGE_BUCKET_NAME = 'eukiak-bucket-demo'
-
-CORS_ALLOW_ALL_ORIGINS = True
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# Celery
-
-
-"""
-CELERY_accept_content = ['application/json']
-CELERY_task_serializer = 'json'
-CELERY_TASK_DEFAULT_QUEUE = 'django-queue-dev'
-CELERY_BROKER_URL = "sqs://"
-
-CELERY_BROKER_TRANSPORT_OPTIONS = {
-    'region': 'us-east-1',
-    'visibility_timeout': 3600,
-    'predefined_queues': {
-        'django-queue-dev': {
-            'url': 'https://sqs.us-east-1.amazonaws.com/524876634018/django-queue-dev',
-            'access_key_id': os.environ.get('AWS_ACCESS_KEY_ID'),
-            'secret_access_key': os.environ.get('AWS_SECRET_ACCESS_KEY')
+# swagger auth disable = False enable = true
+SWAGGER_SETTINGS = {
+    'USE_SESSION_AUTH': True,
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
         }
     }
 }
-CELERY_result_backend = None
-"""

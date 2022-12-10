@@ -1,28 +1,50 @@
-from django.shortcuts import render
+from datetime import datetime
 
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
+from swagger.orders.order_items import (
+    orderItems, shippingAddress, paymentMethod, itemsPrice, totalPrice,
+    shippingPrice, taxPrice, order_items_response,
+)
+
+from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 
-from ..models import Product, Order, OrderItem, ShippingAddress
-from ..serializers import ProductSerializer, OrderSerializer
-
-from rest_framework import status
-from datetime import datetime
+from base.models import Product, Order, OrderItem, ShippingAddress
+from base.serializers import OrderSerializer
 
 
-@api_view(['POST'])
+@swagger_auto_schema(method='POST', request_body=openapi.Schema(
+    type=openapi.TYPE_OBJECT,
+    required=['orderItems', 'shippingAddress', 'paymentMethod'],
+    properties={
+        'orderItems': openapi.Schema(type=openapi.TYPE_ARRAY, items=orderItems),
+        'shippingAddress': shippingAddress,
+        'paymentMethod': paymentMethod,
+        'itemsPrice': itemsPrice,
+        'shippingPrice': shippingPrice,
+        'taxPrice': taxPrice,
+        'totalPrice': totalPrice
+    },
+),
+responses=)
 @permission_classes([IsAuthenticated])
+@api_view(['POST'])
 def addOrderItems(request):
+    print(request.content_params)
     user = request.user
     data = request.data
+    print('+++++++++++++++++')
+    print(data)
 
-    orderItems = data['orderItems']
-    if orderItems and len(orderItems) == 0:
+    order_items = data['orderItems']
+    if order_items and len(order_items) == 0:
         return Response({'detail': 'No Order Items'}, status=status.HTTP_400_BAD_REQUEST)
     else:
 
-        # (1) Create order
+        # (1) Create orders
 
         order = Order.objects.create(
             user=user,
@@ -42,8 +64,8 @@ def addOrderItems(request):
             country=data['shippingAddress']['country'],
         )
 
-        # (3) Create order items adn set order to orderItem relationship
-        for i in orderItems:
+        # (3) Create orders items adn set orders to orderItem relationship
+        for i in order_items:
             product = Product.objects.get(_id=i['product'])
 
             item = OrderItem.objects.create(
@@ -84,7 +106,6 @@ def getOrders(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def getOrderById(request, pk):
-
     user = request.user
 
     try:
@@ -93,7 +114,7 @@ def getOrderById(request, pk):
             serializer = OrderSerializer(order, many=False)
             return Response(serializer.data)
         else:
-            Response({'detail': 'Not authorized to view this order'},
+            Response({'detail': 'Not authorized to view this orders'},
                      status=status.HTTP_400_BAD_REQUEST)
     except:
         return Response({'detail': 'Order does not exist'}, status=status.HTTP_400_BAD_REQUEST)

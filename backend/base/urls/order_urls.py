@@ -1,9 +1,12 @@
 from django.urls import path
-from ..views import order_views as views
-
+from base.views import order_views as views
+"""
+Order Views
+api/orders
+"""
 
 urlpatterns = [
-
+    # api/orders/ |
     path('', views.getOrders, name='orders'),
     path('add/', views.addOrderItems, name='orders-add'),
     path('myorders/', views.getMyOrders, name='myorders'),

@@ -130,12 +130,12 @@ class Migration(migrations.Migration):
                     models.AutoField(editable=False, primary_key=True, serialize=False),
                 ),
                 (
-                    "order",
+                    "orders",
                     models.OneToOneField(
                         blank=True,
                         null=True,
                         on_delete=django.db.models.deletion.CASCADE,
-                        to="base.order",
+                        to="base.orders",
                     ),
                 ),
             ],
@@ -197,11 +197,11 @@ class Migration(migrations.Migration):
                     models.AutoField(editable=False, primary_key=True, serialize=False),
                 ),
                 (
-                    "order",
+                    "orders",
                     models.ForeignKey(
                         null=True,
                         on_delete=django.db.models.deletion.SET_NULL,
-                        to="base.order",
+                        to="base.orders",
                     ),
                 ),
                 (

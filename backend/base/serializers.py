@@ -101,7 +101,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 class OrderSerializer(serializers.ModelSerializer):
     """
-    Simple Review Serielizer class
+    Simple Review Serializer class
     """
     orderItems = serializers.SerializerMethodField(read_only=True)
     shippingAddress = serializers.SerializerMethodField(read_only=True)
@@ -148,7 +148,7 @@ class ShippingAddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShippingAddress
         fields = (
-            'order',
+            'orders',
             'address',
             'city',
             'postalCode',
