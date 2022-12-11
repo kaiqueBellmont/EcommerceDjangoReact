@@ -2,11 +2,6 @@ from datetime import datetime
 
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
-from swagger.orders.order_items import (
-    orderItems, shippingAddress, paymentMethod, itemsPrice, totalPrice,
-    shippingPrice, taxPrice, order_items_response,
-)
-
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
@@ -14,6 +9,10 @@ from rest_framework.response import Response
 
 from base.models import Product, Order, OrderItem, ShippingAddress
 from base.serializers import OrderSerializer
+from swagger.orders.order_items import (
+    orderItems, shippingAddress, paymentMethod, itemsPrice, totalPrice,
+    shippingPrice, taxPrice, response,
+)
 
 
 @swagger_auto_schema(method='POST', request_body=openapi.Schema(
@@ -28,16 +27,12 @@ from base.serializers import OrderSerializer
         'taxPrice': taxPrice,
         'totalPrice': totalPrice
     },
-),
-responses=)
+), responses=response)
 @permission_classes([IsAuthenticated])
 @api_view(['POST'])
 def addOrderItems(request):
-    print(request.content_params)
     user = request.user
     data = request.data
-    print('+++++++++++++++++')
-    print(data)
 
     order_items = data['orderItems']
     if order_items and len(order_items) == 0:
@@ -56,7 +51,7 @@ def addOrderItems(request):
 
         # (2) Create shipping address
 
-        shipping = ShippingAddress.objects.create(
+        ShippingAddress.objects.create(
             order=order,
             address=data['shippingAddress']['address'],
             city=data['shippingAddress']['city'],
@@ -79,10 +74,11 @@ def addOrderItems(request):
 
             # (4) Update stock
 
-            product.countInStock -= item.qty
+            # product.countInStock -= item.qty
             product.save()
 
         serializer = OrderSerializer(order, many=False)
+        print(serializer.data)
         return Response(serializer.data)
 
 

@@ -227,6 +227,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # swagger auth disable = False enable = true
 SWAGGER_SETTINGS = {
+    "DEFAULT_MODEL_RENDERING": "example",
     'USE_SESSION_AUTH': True,
     'SECURITY_DEFINITIONS': {
         'Bearer': {
