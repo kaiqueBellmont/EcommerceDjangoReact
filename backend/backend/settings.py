@@ -115,7 +115,6 @@ TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [
-            'backend/frontend/build',
             os.path.join(BASE_DIR, 'frontend/build'),
         ],
         "APP_DIRS": True,
@@ -136,6 +135,7 @@ WSGI_APPLICATION = "backend.wsgi.application"
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 # AWS RDS config or local RDS
+"""
 if 'RDS_HOSTNAME' in os.environ:
     DATABASES = {
         'default': {
@@ -148,16 +148,25 @@ if 'RDS_HOSTNAME' in os.environ:
         }
     }
 if not 'RDS_HOSTNAME' in os.environ:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.environ.get('POSTGRES_NAME'),
-            'USER': os.environ.get('POSTGRES_USER'),
-            'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
-            'HOST': 'db',
-            'PORT': 5432,
-        }
+"""
+"""
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
+        'HOST': 'db',
+        'PORT': 5432,
     }
+}
+"""
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
@@ -213,8 +222,10 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 AWS_STORAGE_BUCKET_NAME = 'eukiak-bucket-demo'
 
 # AWS RDS configs
+"""
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 STATICFILES_STORAGE = 'storages.backends.s3boto3.S3StaticStorage'
+"""
 
 # AWS credentials
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
@@ -239,7 +250,13 @@ SWAGGER_SETTINGS = {
 }
 
 CORS_ALLOWED_ORIGINS = [
-    'http://venv.eba-nfyb2vzc.us-west-2.elasticbeanstalk.com',
-    'https://master.d2zr1w5wpewne6.amplifyapp.com'
+    "http://127.0.0.1:3000"
+    #     'http://venv.eba-nfyb2vzc.us-west-2.elasticbeanstalk.com',
+    #     'https://master.d2zr1w5wpewne6.amplifyapp.com'
 ]
 SECURE_CROSS_ORIGIN_OPENER_POLICY = None
+
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:3000'
+]
+CORS_ORIGIN_ALLOW_ALL = True

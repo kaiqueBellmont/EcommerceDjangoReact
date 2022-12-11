@@ -11,26 +11,7 @@ urlpatterns = [
     # admin paths
     path('admin/', admin.site.urls),
     # deploy with backend, single project
-    path('', TemplateView.as_view(template_name='index.html')),
-
-    # TODO problem with browser router react in production
-    # way 1: use hash router
-    # way 2: deploy the both separated, frond and back (ideal)
-    path('login', TemplateView.as_view(template_name='index.html')),
-    path('register', TemplateView.as_view(template_name='index.html')),
-    path('profile', TemplateView.as_view(template_name='index.html')),
-    path('shipping', TemplateView.as_view(template_name='index.html')),
-    path('payment', TemplateView.as_view(template_name='index.html')),
-    path('placeorder', TemplateView.as_view(template_name='index.html')),
-    path('orders/<str:pk>', TemplateView.as_view(template_name='index.html')),
-    path('product/<str:pk>', TemplateView.as_view(template_name='index.html')),
-    path('cart/<str:pk>', TemplateView.as_view(template_name='index.html')),
-    path('cart', TemplateView.as_view(template_name='index.html')),
-    path('admin/userlist', TemplateView.as_view(template_name='index.html')),
-    path('admin/user/<str:pk>/edit', TemplateView.as_view(template_name='index.html')),
-    path('admin/productlist', TemplateView.as_view(template_name='index.html')),
-    path('admin/product/<str:pk>/edit', TemplateView.as_view(template_name='index.html')),
-    path('admin/orderlist', TemplateView.as_view(template_name='index.html')),
+    path('', schema_view.with_ui('swagger'), name="swagger_schema"),
 
     # base urls
     path('api/products/', include('base.urls.product_urls')),

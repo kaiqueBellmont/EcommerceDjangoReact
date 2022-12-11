@@ -1,23 +1,44 @@
+version: '3'
 services:
-  db:
-    image: postgres
-    volumes:
-      - ./data/db:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
   backend:
-    build:
-      ./backend
-    ports:
-      - "8000:8000"
+    build: ./backend
     volumes:
       - ./backend:/backend
-    command: bash -c "python manage.py runserver 0.0.0.0:8000"
-  web:
-    build: ./backend/frontend
+    env_file:
+      - ./backend/.env
+  migrate:
+    extends:
+      service: backend
+    command: python manage.py migrate
+  web_run:
+    extends:
+      service: backend
+    command: gunicorn -c gunicorn.py.ini backend.wsgi
     ports:
-      - "3000:3000"
+      - "5000:5000"
+    networks:
+      - app-test
+
+  frontend:
+    container_name: front
+    build:
+      context: ./backend/frontend
+    restart: always
+    tty: true
     volumes:
-      - ./data/frontend:/backend/frontend
+      - './backend/frontend:/frontend'
+    ports:
+      - '3000:3000'
+    networks:
+      - app-test
+    environment:
+      - NODE_ENV=development
+    command: 'npm start'
+
+
+networks:
+  app-test:
+    driver: bridge
+
+
+

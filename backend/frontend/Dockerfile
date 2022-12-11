@@ -1,11 +1,15 @@
-FROM node:14.17.3
-
+FROM node:16-alpine
+# Set the working directory to /app inside the container
 WORKDIR /frontend
-
+# Copy app files
 COPY . .
-
-RUN npm install
-
+RUN npm install --legacy-peer-deps
+# Build the app
+RUN npm run build
+# ==== RUN =======
+# Set the env to "production"
+ENV NODE_ENV dev
+# Expose the port on which the app will be running (3000 is the default that `serve` uses)
 EXPOSE 3000
-
-CMD ["npm", "start"]
+# Start the app
+CMD "node server.js"
