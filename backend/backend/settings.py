@@ -237,3 +237,9 @@ SWAGGER_SETTINGS = {
         }
     }
 }
+
+CORS_ALLOWED_ORIGINS = [
+    'http://venv.eba-nfyb2vzc.us-west-2.elasticbeanstalk.com',
+    'https://master.d2zr1w5wpewne6.amplifyapp.com'
+]
+SECURE_CROSS_ORIGIN_OPENER_POLICY = None

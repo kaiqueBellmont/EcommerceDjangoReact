@@ -147,11 +147,4 @@ class ShippingAddressSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ShippingAddress
-        fields = (
-            'orders',
-            'address',
-            'city',
-            'postalCode',
-            'country',
-            'shippingPrice',
-        )
+        fields = "__all__"
