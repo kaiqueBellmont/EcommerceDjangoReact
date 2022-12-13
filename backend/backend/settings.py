@@ -149,6 +149,8 @@ if 'RDS_HOSTNAME' in os.environ:
     }
 if not 'RDS_HOSTNAME' in os.environ:
 """
+
+# postgres + docker
 """
 DATABASES = {
     'default': {
