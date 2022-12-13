@@ -1,5 +1,6 @@
-from base.models import *
-import T
+from django.test import TestCase
+
+from base.models import User
 import requests
 import jsonpath
 
@@ -7,18 +8,18 @@ import jsonpath
 class BaseMixin:
     def make_user(
             self,
-            name='user123',
+            username='user123',
             email='user@gmail.com',
-            password='user"$123'
+            password='user"$123',
     ):
         return User.objects.create_user(
-            name=name,
+            username=username,
             email=email,
             password=password
         )
 
 
-class BaseTestSetup(TestCase):
+class BaseTestSetup(TestCase, BaseMixin):
     def setUp(self):
         return super().setUp()
 

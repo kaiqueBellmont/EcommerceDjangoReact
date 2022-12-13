@@ -23,7 +23,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         return data
 
 
-class   MyTokenObtainPairView(TokenObtainPairView):
+class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
 
@@ -37,16 +37,14 @@ def registerUser(request):
     """
 
     data = request.data
-    print(data)
     try:
-        print(User)
         user = User.objects.create(
             first_name=data['name'],
             username=data['name'],
             email=data['email'],
             password=make_password(data['password'])
         )
-
+        user.save()
         serializer = UserSerializerWithToken(user, many=False)
         return Response(serializer.data)
     except:
