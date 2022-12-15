@@ -20,8 +20,6 @@ class UserEndpointsTest(BaseTestSetup):
             }
         )
         users = res.json()
-        import pdb
-        pdb.set_trace()
 
     @pytest.mark.django_db(transaction=False, reset_sequences=True)
     def test_user_register(self):

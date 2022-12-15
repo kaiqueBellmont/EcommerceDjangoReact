@@ -1,4 +1,3 @@
-import logging
 from typing import Any
 
 from .base_test import BaseTestSetup, User
@@ -39,7 +38,6 @@ class UserViewsFunctionsTest(BaseTestSetup):
         updated_user = self.user
         updated_user.email = 'userUPDATED@gmail.com'
         assert self.user.email == updated_user.email
-
 
     def test_delete_user(self):
         user = User.objects.latest('id')
