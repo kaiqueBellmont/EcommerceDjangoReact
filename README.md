@@ -33,6 +33,6 @@ Basta clonar o projeto em qualquer diretório:
 - Atualizarei o front, já que utilizei bastante coisa que já está bem antigo.
 - terminarei os testes e a documentação.
 
-### Este projeto é totalmente coltado para fins estudantis.
+### Este projeto é totalmente voltado para fins estudantis.
 ### Eu quis fazer um projeto inteiro sozinho, back, front, testes, documentação, deploy, etc.
 #### Ainda não está terminado, está cerca de 70%. (Está funcionando, mas falta muito ainda.)
